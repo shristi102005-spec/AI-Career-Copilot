@@ -1,8 +1,12 @@
 from fastapi import APIRouter, UploadFile, File, Form
-from backend.app.services.parser import extract_text_from_pdf
-from backend.app.services.gemini import analyze_resume
+
+from app.services.parser import extract_text_from_pdf
+from app.services.analyzer import ResumeAnalyzer
 
 router = APIRouter()
+
+analyzer = ResumeAnalyzer()
+
 
 @router.post("/upload-resume")
 async def upload_resume(
@@ -11,7 +15,7 @@ async def upload_resume(
 ):
     text = extract_text_from_pdf(file.file)
 
-    analysis = analyze_resume(
+    analysis = analyzer.analyze_resume(
         resume_text=text,
         job_description=job_description
     )
