@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import api from "../services/api";
+import ReactMarkdown from "react-markdown";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [result, setResult] = useState<any>(null);
+  const [tailoredResult, setTailoredResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [coverLetter,setCoverLetter]=useState("");
 
   const analyzeResume = async () => {
     if (!file) {
@@ -32,9 +35,68 @@ export default function Home() {
     setLoading(false);
   };
 
+  const tailorResume = async () => {
+    if (!file) {
+      alert("Please upload a resume.");
+      return;
+    }
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("job_description", jobDescription);
+
+    try {
+      const response = await api.post("/tailor-resume", formData);
+      console.log(JSON.stringify(response.data, null, 2));
+      setTailoredResult(response.data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to tailor resume.");
+    }
+
+    setLoading(false);
+  };
+
+  const generateCoverLetter = async () => {
+
+    if(!file){
+    alert("Upload Resume");
+    return;
+    }
+    
+    setLoading(true);
+    
+    const formData=new FormData();
+    
+    formData.append("file",file);
+    formData.append("job_description",jobDescription);
+    
+    try{
+    
+    const response=await api.post(
+    "/generate-cover-letter",
+    formData
+    );
+    
+    setCoverLetter(response.data.cover_letter);
+    
+    }catch(err){
+    
+    console.log(err);
+    
+    alert("Failed");
+    
+    }
+    
+    setLoading(false);
+    
+    }
+
   return (
     <main className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
-      <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-3xl">
+      <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-4xl">
 
         <h1 className="text-4xl font-bold text-center text-blue-700">
           AI Career Copilot 🚀
@@ -70,19 +132,34 @@ export default function Home() {
           />
         </div>
 
-        {/* Button */}
-        <button
-          onClick={analyzeResume}
-          className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
-        >
-          {loading ? "Analyzing..." : "Analyze Resume"}
-        </button>
+        {/* Buttons */}
+        <div className="mt-8 flex gap-4">
+          <button
+            onClick={analyzeResume}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+          >
+            {loading ? "Analyzing..." : "Analyze Resume"}
+          </button>
 
-        {/* Results */}
+          <button
+            onClick={tailorResume}
+            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold transition"
+          >
+             Tailor Resume
+          </button>
+
+          <button
+            onClick={generateCoverLetter}
+            className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
+          >
+             Generate Cover Letter
+          </button>
+        </div>
+
+        {/* ATS Analysis */}
         {result && (
           <div className="mt-8 space-y-6">
 
-            {/* Resume Score */}
             <div className="bg-green-100 rounded-xl p-6 shadow">
               <h2 className="text-xl font-bold text-green-800">
                 Resume Score
@@ -93,7 +170,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Job Match Score */}
             <div className="bg-blue-100 rounded-xl p-6 shadow">
               <h2 className="text-xl font-bold text-blue-800">
                 Job Match Score
@@ -104,7 +180,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Strengths */}
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-green-700">
                 ✅ Strengths
@@ -117,7 +192,6 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* Suggestions */}
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-orange-600">
                 💡 Suggestions
@@ -130,7 +204,6 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* Matched Skills */}
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-blue-700">
                 🎯 Matched Skills
@@ -154,7 +227,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Missing Skills */}
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-red-700">
                 ❌ Missing Skills
@@ -181,6 +253,130 @@ export default function Home() {
           </div>
         )}
 
+        {/* AI Resume Tailoring */}
+        {tailoredResult && (
+          <div className="mt-10 bg-white rounded-xl shadow-lg p-6 space-y-6">
+
+            <h2 className="text-3xl font-bold text-purple-700">
+               AI Tailored Resume
+            </h2>
+
+            <div className="bg-purple-100 p-5 rounded-lg">
+              <h3 className="font-bold text-lg mb-2">
+                ATS Score
+              </h3>
+
+              <p className="text-4xl font-bold">
+                {tailoredResult.ats_score}%
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-blue-700 mb-2">
+                Professional Summary
+              </h3>
+
+              <div className="leading-7">
+  <ReactMarkdown>
+    {tailoredResult.tailored_summary}
+  </ReactMarkdown>
+</div>
+            </div>
+
+            <div>
+  <h3 className="text-xl font-bold text-green-700 mb-2">
+    Improved Projects
+  </h3>
+
+  <div className="space-y-5">
+    {tailoredResult.tailored_projects?.map(
+      (project: any, index: number) => (
+        <div
+          key={index}
+          className="border rounded-xl p-4 bg-gray-50"
+        >
+          <h4 className="text-lg font-bold text-blue-700">
+            {project.title}
+          </h4>
+
+          <div className="flex flex-wrap gap-2 mt-3">
+           {project.technologies
+            ?.split("|")
+            .map((tech: string, i: number) => (
+              <span
+                key={i}
+                className="bg-blue-600 text-white px-2 py-1 rounded-full text-sm"
+              >
+                {tech.trim()}
+              </span>
+            ))}
+        </div>
+          <ul className="list-disc pl-6 mt-4 space-y-2">
+  {project.description?.map(
+    (point: string, i: number) => (
+      <li key={i}>
+  <ReactMarkdown>
+    {point}
+  </ReactMarkdown>
+</li>
+    )
+  )}
+</ul>
+        </div>
+      )
+    )}
+   
+  </div>
+</div>
+
+<div>
+  <h3 className="text-xl font-bold text-orange-600 mb-4">
+    Changes Made
+  </h3>
+
+  <div className="space-y-5">
+    {tailoredResult.changes?.map((change: any, index: number) => (
+      <div
+        key={index}
+        className="border rounded-xl p-5 bg-orange-50"
+      >
+        <h4 className="text-lg font-bold text-orange-700">
+          {change.section}
+          {change.item && ` - ${change.item}`}
+        </h4>
+
+        {change.description ? (
+  <p className="mt-3 text-gray-700">
+    {change.description}
+  </p>
+) : (
+  <ul className="list-disc pl-6 mt-3 space-y-2">
+    {change.bullet_changes?.map((item: string, i: number) => (
+      <li key={i}>{item}</li>
+    ))}
+  </ul>
+)}
+
+
+      </div>
+    ))}
+  </div>
+</div>
+          </div>
+        )}
+       {coverLetter && (
+  <div className="mt-10 bg-white rounded-xl shadow-lg p-6">
+
+    <h2 className="text-3xl font-bold text-green-700 mb-6">
+      📄 AI Generated Cover Letter
+    </h2>
+
+    <div className="bg-gray-100 rounded-lg p-6 whitespace-pre-wrap leading-8">
+      {coverLetter}
+    </div>
+
+  </div>
+)}
       </div>
     </main>
   );
