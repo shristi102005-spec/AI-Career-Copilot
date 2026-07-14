@@ -49,11 +49,22 @@ export default function Home() {
 
     try {
       const response = await api.post("/tailor-resume", formData);
+
+      if (response.data.error) {
+        alert(response.data.message);
+        setLoading(false);
+        return;
+      }
       console.log(JSON.stringify(response.data, null, 2));
       setTailoredResult(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Failed to tailor resume.");
+    
+      const message =
+        error?.response?.data?.message ||
+        "Something went wrong. Please try again.";
+    
+      alert(message);
     }
 
     setLoading(false);

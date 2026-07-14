@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.resume import router as resume_router
 from app.api.cover_letter import router as cover_letter_router
+from app.api import interview
 
 app = FastAPI(
     title="AI Career Copilot API",
@@ -26,3 +27,4 @@ def home():
 
 app.include_router(resume_router)
 app.include_router(cover_letter_router)
+app.include_router(interview.router)

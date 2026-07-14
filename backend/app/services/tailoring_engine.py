@@ -12,7 +12,6 @@ class ResumeTailoringEngine:
     def __init__(self):
         self.gemini = GeminiClient()
 
-
     def tailor_resume(
         self,
         resume_text: str,
@@ -50,7 +49,6 @@ Resume:
 
 {resume_text}
 
-
 Job Description:
 
 {job_description}
@@ -58,13 +56,23 @@ Job Description:
 
         response_text = self.gemini.generate(prompt)
 
+        # If Gemini returned an error dictionary
+        if isinstance(response_text, dict):
+            return response_text
+
         response_text = response_text.strip()
 
-        # Remove markdown if Gemini returns JSON inside code block
+        # Remove markdown if Gemini returns JSON inside code blocks
         response_text = response_text.replace("```json", "")
         response_text = response_text.replace("```", "")
         response_text = response_text.strip()
 
-        result = json.loads(response_text)
+        try:
+            result = json.loads(response_text)
+            return result
 
-        return result
+        except json.JSONDecodeError:
+            return {
+                "error": True,
+                "message": "Gemini returned an invalid response."
+            }
