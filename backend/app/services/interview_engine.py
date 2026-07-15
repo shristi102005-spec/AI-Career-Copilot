@@ -5,8 +5,8 @@ from app.services.gemini import GeminiClient
 
 class InterviewQuestionEngine:
     """
-    Generates interview questions based on
-    resume + job description.
+    Generates personalized interview questions
+    and suggested answers based on Resume + Job Description.
     """
 
     def __init__(self):
@@ -19,26 +19,66 @@ class InterviewQuestionEngine:
     ) -> dict:
 
         prompt = f"""
-You are an AI Technical Interviewer.
+You are a Senior AI Technical Interviewer working at Google, Microsoft and OpenAI.
 
-Based on the following Resume and Job Description,
-generate interview questions.
+Your job is to prepare the candidate for interviews.
 
-Rules:
-- Do NOT generate answers.
-- Questions should be realistic.
-- Suitable for internship interviews.
-- Return ONLY valid JSON.
+Based ONLY on the Resume and Job Description below:
+
+Generate ONLY 6 interview questions.
+
+Exactly:
+
+1 HR Question
+1 Python Question
+1 SQL Question
+1 Machine Learning Question
+1 DSA Question
+1 Project-based Question
+
+For EVERY question you MUST provide:
+
+- easy_answer
+- professional_answer
+
+For ONLY the HR question also provide:
+
+star_answer
+
+For every technical question:
+
+"star_answer": null
+
+Never omit any field.
+
+Return ONLY valid JSON.
 
 Format:
 
 {{
-    "hr_questions": [],
-    "technical_questions": [],
-    "python_questions": [],
-    "sql_questions": [],
-    "ml_questions": [],
-    "dsa_questions": []
+    "interview_questions":[
+        {{
+            "category":"HR",
+            "difficulty":"Easy",
+            "question":"...",
+            "easy_answer":"...",
+            "professional_answer":"...",
+            "star_answer":{{
+                "situation":"...",
+                "task":"...",
+                "action":"...",
+                "result":"..."
+            }}
+        }},
+        {{
+            "category":"Python",
+            "difficulty":"Medium",
+            "question":"...",
+            "easy_answer":"...",
+            "professional_answer":"...",
+            "star_answer":null
+        }}
+    ]
 }}
 
 Resume:
@@ -49,7 +89,6 @@ Job Description:
 
 {job_description}
 """
-
         response_text = self.gemini.generate(prompt)
 
         if isinstance(response_text, dict):
@@ -61,10 +100,12 @@ Job Description:
         response_text = response_text.strip()
 
         try:
-            return json.loads(response_text)
+            result = json.loads(response_text)
+            return result
 
         except json.JSONDecodeError:
             return {
                 "error": True,
-                "message": "Gemini returned invalid JSON."
+                "message": "Gemini returned invalid JSON.",
+                "raw_response": response_text
             }

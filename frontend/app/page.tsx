@@ -1,5 +1,7 @@
 "use client";
 
+import { ClipLoader } from "react-spinners";
+import { jsPDF } from "jspdf";
 import { useState } from "react";
 import api from "../services/api";
 import ReactMarkdown from "react-markdown";
@@ -11,6 +13,7 @@ export default function Home() {
   const [tailoredResult, setTailoredResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [coverLetter,setCoverLetter]=useState("");
+  const [interviewResult, setInterviewResult] = useState<any>(null);
 
   const analyzeResume = async () => {
     if (!file) {
@@ -103,7 +106,210 @@ export default function Home() {
     
     setLoading(false);
     
-    }
+    };
+
+    const downloadCoverLetter = () => {
+      if (!coverLetter) {
+        alert("Generate a cover letter first.");
+        return;
+      }
+    
+      const doc = new jsPDF();
+    
+      doc.setFontSize(18);
+      doc.text("AI Generated Cover Letter", 20, 20);
+    
+      doc.setFontSize(12);
+    
+      const lines = doc.splitTextToSize(coverLetter, 170);
+    
+      doc.text(lines, 20, 35);
+    
+      doc.save("Cover_Letter.pdf");
+    };
+
+    const downloadTailoredResume = () => {
+
+      if (!tailoredResult) {
+        alert("Tailor your resume first.");
+        return;
+      }
+    
+      const doc = new jsPDF();
+    
+      let y = 20;
+    
+      doc.setFontSize(20);
+      doc.text("AI Tailored Resume", 20, y);
+    
+      y += 15;
+    
+      doc.setFontSize(14);
+      doc.text(`ATS Score: ${tailoredResult.ats_score}%`, 20, y);
+    
+      y += 15;
+    
+      doc.setFontSize(16);
+      doc.text("Professional Summary", 20, y);
+    
+      y += 10;
+    
+      doc.setFontSize(12);
+    
+      const summary = doc.splitTextToSize(
+        tailoredResult.tailored_summary,
+        170
+      );
+    
+      doc.text(summary, 20, y);
+    
+      y += summary.length * 7 + 10;
+    
+      doc.setFontSize(16);
+      doc.text("Projects", 20, y);
+    
+      y += 10;
+    
+      tailoredResult.tailored_projects?.forEach((project: any) => {
+    
+        doc.setFontSize(14);
+        doc.text(project.title, 20, y);
+    
+        y += 8;
+    
+        doc.setFontSize(11);
+    
+        const tech = doc.splitTextToSize(
+          "Technologies: " + project.technologies,
+          170
+        );
+    
+        doc.text(tech, 20, y);
+    
+        y += tech.length * 6 + 4;
+    
+        project.description.forEach((point: string) => {
+    
+          const lines = doc.splitTextToSize(
+            "• " + point,
+            165
+          );
+    
+          doc.text(lines, 25, y);
+    
+          y += lines.length * 6 + 2;
+    
+          if (y > 270) {
+            doc.addPage();
+            y = 20;
+          }
+    
+        });
+    
+        y += 8;
+    
+      });
+    
+      doc.setFontSize(16);
+    
+      doc.text("Changes Made", 20, y);
+    
+      y += 10;
+    
+      tailoredResult.changes?.forEach((change: any) => {
+    
+        const heading =
+          change.section +
+          (change.item ? ` - ${change.item}` : "");
+    
+        doc.setFontSize(13);
+    
+        doc.text(heading, 20, y);
+    
+        y += 8;
+    
+        if (change.description) {
+    
+          const lines = doc.splitTextToSize(
+            change.description,
+            165
+          );
+    
+          doc.setFontSize(11);
+    
+          doc.text(lines, 25, y);
+    
+          y += lines.length * 6 + 4;
+    
+        }
+    
+        if (change.bullet_changes) {
+    
+          change.bullet_changes.forEach((bullet: string) => {
+    
+            const lines = doc.splitTextToSize(
+              "• " + bullet,
+              165
+            );
+    
+            doc.text(lines, 25, y);
+    
+            y += lines.length * 6 + 2;
+    
+          });
+    
+        }
+    
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+    
+      });
+    
+      doc.save("AI_Tailored_Resume.pdf");
+    
+    };
+
+    const generateInterviewQuestions = async () => {
+
+      if (!file) {
+        alert("Upload Resume");
+        return;
+      }
+    
+      setLoading(true);
+    
+      const formData = new FormData();
+    
+      formData.append("file", file);
+      formData.append("job_description", jobDescription);
+    
+      try {
+    
+        const response = await api.post(
+          "/generate-interview-questions",
+          formData
+        );
+    
+        setInterviewResult(response.data);
+    
+      } catch (err) {
+    
+        console.log(err);
+    
+        alert("Failed to generate interview questions.");
+    
+      }
+    
+      setLoading(false);
+    
+    };
+
+    const copyText = (text: string) => {
+      navigator.clipboard.writeText(text);
+      alert("Copied Successfully!");
+    };
 
   return (
     <main className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
@@ -144,12 +350,17 @@ export default function Home() {
         </div>
 
         {/* Buttons */}
-        <div className="mt-8 flex gap-4">
+        <div className="mt-8 flex flex-wrap gap-4">
           <button
             onClick={analyzeResume}
             className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
           >
-            {loading ? "Analyzing..." : "Analyze Resume"}
+            {loading ? (
+               <ClipLoader color="white" size={20} />
+            ) : (
+                "Analyze Resume"
+            )}
+
           </button>
 
           <button
@@ -159,11 +370,22 @@ export default function Home() {
              Tailor Resume
           </button>
 
+          
+
           <button
             onClick={generateCoverLetter}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
           >
              Generate Cover Letter
+          </button>
+
+          
+            
+          <button
+            onClick={generateInterviewQuestions}
+            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg font-semibold"
+          >
+            AI Interview Coach
           </button>
         </div>
 
@@ -171,25 +393,39 @@ export default function Home() {
         {result && (
           <div className="mt-8 space-y-6">
 
-            <div className="bg-green-100 rounded-xl p-6 shadow">
-              <h2 className="text-xl font-bold text-green-800">
-                Resume Score
-              </h2>
+<div className="bg-green-100 rounded-xl p-6 shadow">
+  <h2 className="text-xl font-bold text-green-800">
+    Resume Score
+  </h2>
 
-              <p className="text-5xl font-bold mt-3">
-                {result.resume_score}%
-              </p>
-            </div>
+  <div className="w-full bg-gray-300 rounded-full h-4 mt-4">
+    <div
+      className="bg-green-600 h-4 rounded-full transition-all duration-700"
+      style={{ width: `${result.resume_score}%` }}
+    />
+  </div>
 
-            <div className="bg-blue-100 rounded-xl p-6 shadow">
-              <h2 className="text-xl font-bold text-blue-800">
-                Job Match Score
-              </h2>
+  <p className="text-4xl font-bold mt-3">
+    {result.resume_score}%
+  </p>
+</div>
 
-              <p className="text-5xl font-bold mt-3">
-                {result.job_match_score}%
-              </p>
-            </div>
+<div className="bg-blue-100 rounded-xl p-6 shadow">
+  <h2 className="text-xl font-bold text-blue-800">
+    Job Match Score
+  </h2>
+
+  <div className="w-full bg-gray-300 rounded-full h-4 mt-4">
+    <div
+      className="bg-blue-600 h-4 rounded-full transition-all duration-700"
+      style={{ width: `${result.job_match_score}%` }}
+    />
+  </div>
+
+  <p className="text-4xl font-bold mt-3">
+    {result.job_match_score}%
+  </p>
+</div>
 
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-green-700">
@@ -373,6 +609,12 @@ export default function Home() {
     ))}
   </div>
 </div>
+<button
+            onClick={downloadTailoredResume}
+            className="mt-6 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg"
+          >
+            ⬇ Download Tailored Resume PDF
+          </button>
           </div>
         )}
        {coverLetter && (
@@ -386,7 +628,110 @@ export default function Home() {
       {coverLetter}
     </div>
 
+    <button
+      onClick={() => copyText(coverLetter)}
+      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+    >
+      📋 Copy Cover Letter
+    </button>
+
   </div>
+)}
+
+       {interviewResult && (
+
+        <div className="mt-10 bg-white rounded-xl shadow-lg p-6">
+
+        <h2 className="text-3xl font-bold text-orange-700 mb-6">
+
+         🎤 AI Interview Coach
+
+        </h2>
+
+        <div className="space-y-6">
+
+       {interviewResult.interview_questions?.map(
+       (item:any,index:number)=>(
+
+       <div
+       key={index}
+       className="border rounded-xl p-5 bg-gray-50"
+       >
+
+       <div className="flex justify-between">
+
+       <h3 className="text-xl font-bold">
+
+       {item.category}
+
+       </h3>
+
+       <span className="font-semibold">
+
+       {item.difficulty}
+
+      </span>
+
+      </div>
+
+      <p className="mt-4 font-semibold">
+
+       {item.question}
+
+      </p>
+
+      <div className="mt-4 bg-green-50 rounded-lg p-4">
+
+      <p className="font-bold text-green-700">
+
+      💡 Suggested Answer
+
+      </p>
+
+      <div className="mt-4 bg-green-50 rounded-lg p-4">
+  <p className="font-bold text-green-700">
+    💡 Easy Answer
+  </p>
+
+  <ReactMarkdown>
+    {item.easy_answer}
+  </ReactMarkdown>
+</div>
+
+<div className="mt-4 bg-blue-50 rounded-lg p-4">
+  <p className="font-bold text-blue-700">
+    🎯 Professional Answer
+  </p>
+
+  <ReactMarkdown>
+    {item.professional_answer}
+  </ReactMarkdown>
+</div>
+
+{item.star_answer && (
+  <div className="mt-4 bg-yellow-50 rounded-lg p-4">
+    <p className="font-bold text-orange-700">
+      ⭐ STAR Answer
+    </p>
+
+    <p><b>Situation:</b> {item.star_answer.situation}</p>
+    <p><b>Task:</b> {item.star_answer.task}</p>
+    <p><b>Action:</b> {item.star_answer.action}</p>
+    <p><b>Result:</b> {item.star_answer.result}</p>
+  </div>
+)}
+     </div>
+
+    </div>
+
+)
+
+)}
+
+</div>
+
+</div>
+
 )}
       </div>
     </main>
