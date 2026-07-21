@@ -329,6 +329,7 @@ export default function Home() {
 
           <input
             type="file"
+            accept=".pdf,.docx"
             className="mt-2 w-full border rounded-lg p-2"
             onChange={(e) =>
               setFile(e.target.files ? e.target.files[0] : null)
@@ -558,17 +559,33 @@ export default function Home() {
               </span>
             ))}
         </div>
-          <ul className="list-disc pl-6 mt-4 space-y-2">
-  {project.description?.map(
-    (point: string, i: number) => (
-      <li key={i}>
-  <ReactMarkdown>
-    {point}
-  </ReactMarkdown>
-</li>
-    )
-  )}
-</ul>
+          <<ul className="list-disc pl-6 mt-4 space-y-2">
+
+          {Array.isArray(project.description) ? (
+
+           project.description.map(
+             (point: string, i: number) => (
+               <li key={i}>
+                 <ReactMarkdown>
+                   {point}
+                 </ReactMarkdown>
+               </li>
+             )
+           )
+
+         ) : (
+
+           <li>
+            <ReactMarkdown>
+              {typeof project.description === "string"
+                ? project.description
+                : ""}
+            </ReactMarkdown>
+          </li>
+
+         )}
+
+         </ul>
         </div>
       )
     )}

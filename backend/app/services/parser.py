@@ -1,4 +1,5 @@
 import pdfplumber
+from docx import Document
 
 
 class PDFParser:
@@ -19,7 +20,36 @@ class PDFParser:
         return text
 
 
-# Backward-compatible function
+class DOCXParser:
+    """
+    Utility class for extracting text from DOCX resumes.
+    """
+
+    def extract_text(self, file) -> str:
+
+        document = Document(file)
+
+        text = ""
+
+        for paragraph in document.paragraphs:
+            text += paragraph.text + "\n"
+
+        return text
+
+
+# -----------------------
+# PDF Function
+# -----------------------
+
 def extract_text_from_pdf(file):
     parser = PDFParser()
+    return parser.extract_text(file)
+
+
+# -----------------------
+# DOCX Function
+# -----------------------
+
+def extract_text_from_docx(file):
+    parser = DOCXParser()
     return parser.extract_text(file)
