@@ -5,6 +5,9 @@ import { jsPDF } from "jspdf";
 import { useState } from "react";
 import api from "../services/api";
 import ReactMarkdown from "react-markdown";
+import { useDropzone } from "react-dropzone";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -14,6 +17,32 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [coverLetter,setCoverLetter]=useState("");
   const [interviewResult, setInterviewResult] = useState<any>(null);
+
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  
+
+  const onDrop = (acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setFile(acceptedFiles[0]);
+    }
+  };
+  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: {
+      "application/pdf": [".pdf"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+    },
+  });
+
+  if (!mounted) return null;
 
   const analyzeResume = async () => {
     if (!file) {
@@ -312,30 +341,111 @@ export default function Home() {
     };
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
-      <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-4xl">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-950 dark:via-gray-900 dark:to-black flex items-center justify-center p-8 transition-all duration-500">
+     <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white backdrop-blur-xl border border-slate-200 dark:border-slate-700 shadow-[0_20px_60px_rgba(59,130,246,0.15)] rounded-3xl p-10 w-full max-w-4xl transition-all duration-300">
+     <h1 className="text-4xl font-bold text-center text-blue-700 dark:text-blue-400">
+       AI Career Copilot 🚀
+     </h1>
 
-        <h1 className="text-4xl font-bold text-center text-blue-700">
-          AI Career Copilot 🚀
-        </h1>
+        <div className="flex justify-end mb-4">
 
-        <p className="text-center text-gray-600 mt-3">
+  <button
+    onClick={() =>
+      setTheme(theme === "dark" ? "light" : "dark")
+    }
+    className="px-4 py-2 rounded-lg bg-gray-800 text-white dark:bg-white dark:bg-slate-800 dark:text-black transition"
+  >
+    {theme === "dark"
+      ? "☀ Light Mode"
+      : "🌙 Dark Mode"}
+  </button>
+
+</div>
+
+        <p className="text-center text-gray-500 text-lg mt-4">
           Upload your resume and compare it with a job description.
         </p>
 
         {/* Upload Resume */}
         <div className="mt-8">
-          <label className="font-semibold">Upload Resume</label>
 
-          <input
-            type="file"
-            accept=".pdf,.docx"
-            className="mt-2 w-full border rounded-lg p-2"
-            onChange={(e) =>
-              setFile(e.target.files ? e.target.files[0] : null)
-            }
-          />
-        </div>
+         <label className="font-semibold">
+           Upload Resume
+         </label>
+
+         <div
+           {...getRootProps()}
+           className={`mt-3 border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all
+           ${
+             isDragActive
+               ? "border-blue-600 bg-blue-100"
+               : "border-gray-400 bg-gray-50 hover:bg-slate-50 dark:bg-slate-900"
+           }`}
+         >
+
+           <input {...getInputProps()} />
+
+           {isDragActive ? (
+
+            <p className="text-blue-700 font-semibold">
+              📂 Drop your resume here...
+            </p>
+
+          ) : (
+
+           <>
+             <p className="text-lg font-semibold">
+              📄 Drag & Drop Resume Here
+             </p>
+
+             <p className="text-gray-500 mt-2">
+               or click to browse
+             </p>
+
+             <p className="text-sm text-gray-400 mt-2">
+                Supports PDF & DOCX
+             </p>
+           </>
+
+         )}
+
+       </div>
+
+       {file && (
+
+       <div className="mt-6 rounded-xl border border-green-300 bg-green-50 p-5 shadow">
+
+       <h3 className="text-lg font-bold text-green-700">
+       📄 Resume Uploaded Successfully
+       </h3>
+
+       <div className="mt-4 space-y-2">
+
+       <p>
+       <strong>Filename:</strong> {file.name}
+       </p>
+
+       <p>
+       <strong>Size:</strong>{" "}
+       {(file.size / 1024 / 1024).toFixed(2)} MB
+       </p>
+
+       <p>
+       <strong>Type:</strong> {file.type}
+       </p>
+
+       <p className="text-green-700 font-semibold">
+       <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+       Ready for Analysis
+       </span>
+       </p>
+
+       </div>
+
+       </div>
+
+       )}
+    </div>
 
         {/* Job Description */}
         <div className="mt-6">
@@ -343,7 +453,7 @@ export default function Home() {
 
           <textarea
             rows={8}
-            className="mt-2 w-full border rounded-lg p-3"
+            className="mt-2 w-full border border-slate-300 dark:border-slate-700 rounded-lg p-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-gray-400"
             placeholder="Paste the Job Description here..."
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
@@ -428,7 +538,7 @@ export default function Home() {
   </p>
 </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-green-700">
                 ✅ Strengths
               </h2>
@@ -440,7 +550,7 @@ export default function Home() {
               </ul>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-orange-600">
                 💡 Suggestions
               </h2>
@@ -452,7 +562,7 @@ export default function Home() {
               </ul>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-blue-700">
                 🎯 Matched Skills
               </h2>
@@ -475,7 +585,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6">
               <h2 className="text-xl font-bold mb-4 text-red-700">
                 ❌ Missing Skills
               </h2>
@@ -503,7 +613,7 @@ export default function Home() {
 
         {/* AI Resume Tailoring */}
         {tailoredResult && (
-          <div className="mt-10 bg-white rounded-xl shadow-lg p-6 space-y-6">
+          <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 space-y-6">
 
             <h2 className="text-3xl font-bold text-purple-700">
                AI Tailored Resume
@@ -559,7 +669,7 @@ export default function Home() {
               </span>
             ))}
         </div>
-          <<ul className="list-disc pl-6 mt-4 space-y-2">
+          <ul className="list-disc pl-6 mt-4 space-y-2">
 
           {Array.isArray(project.description) ? (
 
@@ -635,7 +745,7 @@ export default function Home() {
           </div>
         )}
        {coverLetter && (
-  <div className="mt-10 bg-white rounded-xl shadow-lg p-6">
+  <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
 
     <h2 className="text-3xl font-bold text-green-700 mb-6">
       📄 AI Generated Cover Letter
@@ -657,7 +767,7 @@ export default function Home() {
 
        {interviewResult && (
 
-        <div className="mt-10 bg-white rounded-xl shadow-lg p-6">
+        <div className="mt-10 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
 
         <h2 className="text-3xl font-bold text-orange-700 mb-6">
 
@@ -672,7 +782,7 @@ export default function Home() {
 
        <div
        key={index}
-       className="border rounded-xl p-5 bg-gray-50"
+       className="border rounded-xl p-5 bg-gray-50 dark:bg-slate-700"
        >
 
        <div className="flex justify-between">
@@ -750,6 +860,9 @@ export default function Home() {
 </div>
 
 )}
+<div className="mt-12 text-center text-sm text-gray-500">
+Built with ❤️ using FastAPI • Next.js • Gemini AI
+</div>
       </div>
     </main>
   );
