@@ -45,6 +45,11 @@ Job Description:
 
         response = self.gemini.generate(prompt)
 
+        # Gemini already returned JSON
+        if isinstance(response, dict):
+            return response
+
+        response = response.strip()
         response = response.replace("```json", "")
         response = response.replace("```", "")
         response = response.strip()

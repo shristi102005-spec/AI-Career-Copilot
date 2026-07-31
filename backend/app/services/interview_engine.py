@@ -1,4 +1,5 @@
 import json
+import re
 
 from app.services.gemini import GeminiClient
 
@@ -81,6 +82,26 @@ Format:
     ]
 }}
 
+IMPORTANT RULES:
+
+Return ONLY valid JSON.
+
+Never use:
+- ```json
+- ```
+- markdown
+- SQL code blocks
+- headings
+- bullet formatting
+
+If you need to write SQL, write it as plain text inside the string.
+
+Do not use triple backticks anywhere.
+
+Every field must be plain text.
+
+Your response must be directly parsable using Python json.loads().
+
 Resume:
 
 {resume_text}
@@ -97,6 +118,7 @@ Job Description:
         response_text = response_text.strip()
         response_text = response_text.replace("```json", "")
         response_text = response_text.replace("```", "")
+        response_text = re.sub(r"\n\s*sql\s*\n", "\nSQL Query:\n", response_text, flags=re.IGNORECASE)
         response_text = response_text.strip()
 
         try:

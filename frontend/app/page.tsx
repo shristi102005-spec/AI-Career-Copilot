@@ -72,33 +72,36 @@ export default function Home() {
       alert("Please upload a resume.");
       return;
     }
-
+  
     setLoading(true);
-
+  
     const formData = new FormData();
     formData.append("file", file);
     formData.append("job_description", jobDescription);
-
+  
     try {
+  
       const response = await api.post("/tailor-resume", formData);
-
-      if (response.data.error) {
-        alert(response.data.message);
-        setLoading(false);
-        return;
+  
+      console.log("Tailor Response:", response.data);
+  
+      if (response && response.data) {
+        setTailoredResult(response.data);
+      } else {
+        alert("No response received.");
       }
-      console.log(JSON.stringify(response.data, null, 2));
-      setTailoredResult(response.data);
+  
     } catch (error: any) {
+  
       console.error(error);
-    
-      const message =
+  
+      alert(
         error?.response?.data?.message ||
-        "Something went wrong. Please try again.";
-    
-      alert(message);
+        "Something went wrong."
+      );
+  
     }
-
+  
     setLoading(false);
   };
 
@@ -157,13 +160,26 @@ export default function Home() {
       doc.save("Cover_Letter.pdf");
     };
 
-    const downloadTailoredResume = () => {
-
+    const downloadTailoredResume = async () => {
       if (!tailoredResult) {
         alert("Tailor your resume first.");
         return;
       }
+      
+      
     
+      // DOCX Resume
+      if (file?.name.toLowerCase().endsWith(".docx")) {
+    
+        window.open(
+          "http://localhost:8000/download/tailored_resume",
+          "_blank"
+        );
+    
+        return;
+      }
+    
+      // PDF Resume
       const doc = new jsPDF();
     
       let y = 20;
@@ -208,14 +224,16 @@ export default function Home() {
     
         doc.setFontSize(11);
     
-        const tech = doc.splitTextToSize(
-          "Technologies: " + project.technologies,
-          170
+        doc.text(
+          doc.splitTextToSize(
+            "Technologies: " + project.technologies,
+            170
+          ),
+          20,
+          y
         );
     
-        doc.text(tech, 20, y);
-    
-        y += tech.length * 6 + 4;
+        y += 12;
     
         project.description.forEach((point: string) => {
     
@@ -226,7 +244,7 @@ export default function Home() {
     
           doc.text(lines, 25, y);
     
-          y += lines.length * 6 + 2;
+          y += lines.length * 6;
     
           if (y > 270) {
             doc.addPage();
@@ -239,67 +257,15 @@ export default function Home() {
     
       });
     
-      doc.setFontSize(16);
-    
-      doc.text("Changes Made", 20, y);
-    
-      y += 10;
-    
-      tailoredResult.changes?.forEach((change: any) => {
-    
-        const heading =
-          change.section +
-          (change.item ? ` - ${change.item}` : "");
-    
-        doc.setFontSize(13);
-    
-        doc.text(heading, 20, y);
-    
-        y += 8;
-    
-        if (change.description) {
-    
-          const lines = doc.splitTextToSize(
-            change.description,
-            165
-          );
-    
-          doc.setFontSize(11);
-    
-          doc.text(lines, 25, y);
-    
-          y += lines.length * 6 + 4;
-    
-        }
-    
-        if (change.bullet_changes) {
-    
-          change.bullet_changes.forEach((bullet: string) => {
-    
-            const lines = doc.splitTextToSize(
-              "• " + bullet,
-              165
-            );
-    
-            doc.text(lines, 25, y);
-    
-            y += lines.length * 6 + 2;
-    
-          });
-    
-        }
-    
-        if (y > 270) {
-          doc.addPage();
-          y = 20;
-        }
-    
-      });
-    
       doc.save("AI_Tailored_Resume.pdf");
-    
     };
-
+    const downloadTailoredPDF = () => {
+      window.open(
+          "http://127.0.0.1:8000/download/tailored_resume_pdf",
+          "_blank"
+      );
+  };
+  
     const generateInterviewQuestions = async () => {
 
       if (!file) {
@@ -708,40 +674,39 @@ export default function Home() {
     Changes Made
   </h3>
 
-  <div className="space-y-5">
-    {tailoredResult.changes?.map((change: any, index: number) => (
-      <div
-        key={index}
-        className="border rounded-xl p-5 bg-orange-50"
-      >
-        <h4 className="text-lg font-bold text-orange-700">
-          {change.section}
-          {change.item && ` - ${change.item}`}
-        </h4>
-
-        {change.description ? (
-  <p className="mt-3 text-gray-700">
-    {change.description}
-  </p>
-) : (
-  <ul className="list-disc pl-6 mt-3 space-y-2">
-    {change.bullet_changes?.map((item: string, i: number) => (
-      <li key={i}>{item}</li>
-    ))}
+  <ul className="list-disc pl-6 space-y-3">
+  {tailoredResult.changes?.map((change: any, index: number) => (
+  <li key={index}>
+    {typeof change === "string"
+      ? change
+      : `${change.section}: ${change.change}`}
+  </li>
+))}
   </ul>
-)}
-
-
-      </div>
-    ))}
-  </div>
 </div>
+
+<div className="flex gap-4 mt-6">
+
 <button
-            onClick={downloadTailoredResume}
-            className="mt-6 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg"
-          >
-            ⬇ Download Tailored Resume PDF
-          </button>
+  onClick={downloadTailoredPDF}
+  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
+>
+⬇ Download PDF
+</button>
+
+<button
+  onClick={()=>{
+    window.open(
+      "http://127.0.0.1:8000/download/tailored_resume",
+      "_blank"
+      );
+  }}
+  className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg"
+>
+  ⬇ Download DOCX
+</button>
+
+</div>
           </div>
         )}
        {coverLetter && (
