@@ -1,4 +1,5 @@
 # 🚀 AI Career Copilot
+### AI-powered Resume Analyzer • Resume Tailoring • Cover Letter Generator • Interview Coach
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)
@@ -6,13 +7,14 @@
 ![Gemini](https://img.shields.io/badge/Google-Gemini-blue?logo=google)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+An AI-powered career assistant that analyzes resumes, optimizes them for ATS, tailors them to specific job descriptions, generates professional cover letters, and prepares users for interviews using Google Gemini AI with an intelligent Ollama fallback.
+
 ## 🌐 Live Demo
 
 🚀 **Frontend:** Coming Soon
 
 ⚙️ **Backend API:** Coming Soon
 
-An AI-powered career assistant that analyzes resumes, optimizes them for ATS, tailors them to specific job descriptions, generates professional cover letters, and prepares users for interviews using Google Gemini AI with an intelligent Ollama fallback.
 ---
 
 ## ✨ Features
@@ -75,6 +77,7 @@ for:
 ### AI
 - Google Gemini 2.5 Flash
 - Ollama (Qwen2.5 7B Fallback)
+- Automatic fallback to Ollama whenever Gemini quota is exhausted.
 
 ---
 
@@ -183,6 +186,24 @@ GEMINI_API_KEY=YOUR_API_KEY
 
 ---
 
+## Skills Demonstrated
+
+✔ FastAPI
+✔ Next.js
+✔ React
+✔ TypeScript
+✔ TailwindCSS
+✔ REST APIs
+✔ Gemini API
+✔ Ollama
+✔ Prompt Engineering
+✔ ATS Resume Analysis
+✔ Markdown Rendering
+✔ PDF Generation
+✔ AI Interview Preparation
+
+---
+
 ## 🚀 Future Improvements
 
 - Multi-language Resume Support
@@ -205,11 +226,9 @@ Passionate about AI, Machine Learning, and Full Stack AI Applications.
 
 Built with ❤️ using FastAPI, Next.js and Google Gemini.
 
-LinkedIn:
-https://www.linkedin.com/in/shristi-483363295/
+LinkedIn: https://www.linkedin.com/in/shristi-483363295/
 
-GitHub:
-https://github.com/shristi102005-spec
+GitHub: https://github.com/shristi102005-spec
 
 ---
 
