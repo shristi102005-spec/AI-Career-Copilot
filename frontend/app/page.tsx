@@ -261,8 +261,8 @@ export default function Home() {
     };
     const downloadTailoredPDF = () => {
       window.open(
-          "http://127.0.0.1:8000/download/tailored_resume_pdf",
-          "_blank"
+        `${process.env.NEXT_PUBLIC_API_URL}/download/tailored_resume_pdf`,
+        "_blank"
       );
   };
   
@@ -697,9 +697,9 @@ export default function Home() {
 <button
   onClick={()=>{
     window.open(
-      "http://127.0.0.1:8000/download/tailored_resume",
+      `${process.env.NEXT_PUBLIC_API_URL}/download/tailored_resume`,
       "_blank"
-      );
+    );
   }}
   className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg"
 >
