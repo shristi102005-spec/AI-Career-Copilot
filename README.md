@@ -1,26 +1,58 @@
 # 🚀 AI Career Copilot
 
-An AI-powered Resume Analyzer & Cover Letter Generator that helps job seekers optimize their resumes for Applicant Tracking Systems (ATS), compare them against job descriptions, and generate AI-assisted cover letters.
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
+![Gemini](https://img.shields.io/badge/Google-Gemini-blue?logo=google)
+![License](https://img.shields.io/badge/License-MIT-green)
 
----
+## 🌐 Live Demo
 
-## 📸 Dashboard
+🚀 **Frontend:** Coming Soon
 
-![Dashboard](screenshots/day12-working-dashboard.png)
+⚙️ **Backend API:** Coming Soon
 
+An AI-powered career assistant that analyzes resumes, optimizes them for ATS, tailors them to specific job descriptions, generates professional cover letters, and prepares users for interviews using Google Gemini AI with an intelligent Ollama fallback.
 ---
 
 ## ✨ Features
 
-- 📄 Upload Resume (PDF)
-- 🎯 ATS Resume Score
-- 🤝 Job Match Score
-- ✅ Matched Skills Detection
-- ❌ Missing Skills Identification
-- 💡 Personalized Resume Suggestions
-- ✉️ AI Cover Letter Generator *(In Progress)*
-- ⚡ FastAPI REST Backend
-- 🎨 Next.js + Tailwind CSS Frontend
+### 📄 Resume Analysis
+- ATS Resume Score
+- Job Match Score
+- Resume Strengths
+- Improvement Suggestions
+- Matched Skills
+- Missing Skills
+
+---
+
+### 🎯 AI Resume Tailoring
+- ATS-Optimized Professional Summary
+- Tailored Project Descriptions
+- Resume Improvements
+- Download Tailored Resume (PDF & DOCX)
+
+---
+
+### 💌 Cover Letter Generator
+- AI-generated personalized cover letters
+- Copy with one click
+- Download as PDF
+
+---
+
+### 🎤 AI Interview Coach
+Generates interview questions with:
+
+- Easy Answer
+- Professional Answer
+- STAR Answer
+
+for:
+- HR Interviews
+- Technical Interviews
+- Behavioral Interviews
 
 ---
 
@@ -29,54 +61,47 @@ An AI-powered Resume Analyzer & Cover Letter Generator that helps job seekers op
 ### Frontend
 - Next.js
 - React
+- TypeScript
 - Tailwind CSS
-- Axios
+- React Markdown
 
 ### Backend
 - FastAPI
 - Python
-
-### AI / ML
-- Resume Analysis Engine
-- ATS Skill Matching
+- Pydantic
 - PDF Parsing
-- Prompt Engineering (Upcoming)
+- DOCX Parsing
 
-### Tools
-- Git & GitHub
-- VS Code
+### AI
+- Google Gemini 2.5 Flash
+- Ollama (Qwen2.5 7B Fallback)
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-AI-Career-Copilot
-│
+AI-Career-Copilot/
+
 ├── backend/
-│   ├── app/
-│   ├── api/
-│   ├── services/
-│   └── main.py
-│
 ├── frontend/
-│   ├── app/
-│   ├── services/
-│   └── public/
-│
 ├── screenshots/
-│
-└── README.md
+├── README.md
+├── LICENSE
+└── .gitignore
+
 ```
 
 ---
 
-## ⚙️ Installation
+## ⚙ Installation
 
 ### Clone Repository
 
 ```bash
 git clone https://github.com/shristi102005-spec/AI-Career-Copilot.git
+
+cd AI-Career-Copilot
 ```
 
 ### Backend
@@ -93,14 +118,6 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Backend runs on:
-
-```
-http://localhost:8000
-```
-
----
-
 ### Frontend
 
 ```bash
@@ -111,58 +128,91 @@ npm install
 npm run dev
 ```
 
-Frontend runs on:
+---
 
+## 🔑 Environment Variables
+
+Backend `.env`
+
+```env
+GEMINI_API_KEY=YOUR_API_KEY
 ```
-http://localhost:3000
-```
 
 ---
 
-## 🚀 How It Works
+## 📸 Screenshots
 
-1. Upload your Resume (PDF)
-2. Paste a Job Description
-3. Click **Analyze Resume**
-4. View:
-   - Resume Score
-   - Job Match Score
-   - Matched Skills
-   - Missing Skills
-   - Resume Suggestions
-5. Generate an AI-powered Cover Letter *(Coming Soon)*
+### 🌙 Landing Page (Dark)
+
+![Dark](screenshots/01-home-dark.png)
 
 ---
 
-## 📈 Roadmap
+### ☀ Landing Page (Light)
 
-- [x] Resume Upload
-- [x] ATS Resume Analysis
-- [x] Job Match Score
-- [x] Skill Matching
-- [x] Resume Suggestions
-- [ ] AI Cover Letter Generator
-- [ ] Interview Question Generator
-- [ ] Resume Bullet Rewriter
-- [ ] PDF Export
-- [ ] Authentication
-- [ ] Deployment on Vercel & Render
+![Light](screenshots/02-home-light.png)
 
 ---
 
-## 👩‍💻 Author
+### 📊 Resume Analysis
+
+![Analysis](screenshots/03-resume-analysis-1.png)
+![Analysis](screenshots/04-resume-analysis-2.png)
+
+
+---
+
+### 🤖 Tailored Resume
+
+![Tailored](screenshots/05-tailored-resume-1.png)
+
+![Tailored](screenshots/06-tailored-resume-2.png)
+
+---
+
+### 💌 Cover Letter
+
+![Cover](screenshots/07-cover-letter.png)
+
+---
+
+### 🎤 Interview Coach
+
+![Interview](screenshots/08-interview-coach.png)
+
+
+---
+
+## 🚀 Future Improvements
+
+- Multi-language Resume Support
+- Authentication
+- Resume Templates
+- AI Mock Interview Voice Mode
+- Resume Version History
+- Job Recommendation Engine
+- LinkedIn Optimization
+
+---
+
+## 👩‍💻 Author 
 
 **Shristi**
 
-B.Tech (Electronics Engineering - AI & ML)
+B.Tech Electronics Engineering (AI & ML)
 
-Building AI-powered applications using FastAPI, Next.js, Python, and Generative AI.
+Passionate about AI, Machine Learning, and Full Stack AI Applications.
+
+Built with ❤️ using FastAPI, Next.js and Google Gemini.
+
+LinkedIn:
+https://www.linkedin.com/in/shristi-483363295/
 
 GitHub:
 https://github.com/shristi102005-spec
 
 ---
 
-## ⭐ Support
+## ⭐ If you like this project
 
-If you like this project, consider giving it a ⭐ on GitHub.
+If you found this project useful, consider giving it a ⭐ on GitHub!
