@@ -344,7 +344,7 @@ export default function Home() {
            className={`mt-3 border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all
            ${
              isDragActive
-               ? "border-blue-600 bg-blue-100"
+               ? "border-blue-600 bg-blue-100 dark:bg-blue-950/40"
                : "border-gray-400 bg-gray-50 hover:bg-slate-50 dark:bg-slate-900"
            }`}
          >
@@ -379,7 +379,7 @@ export default function Home() {
 
        {file && (
 
-       <div className="mt-6 rounded-xl border border-green-300 bg-green-50 p-5 shadow">
+       <div className="mt-6 rounded-xl border border-green-300 bg-green-50 dark:bg-slate-800 p-5 shadow">
 
        <h3 className="text-lg font-bold text-green-700">
        📄 Resume Uploaded Successfully
@@ -430,7 +430,7 @@ export default function Home() {
         <div className="mt-8 flex flex-wrap gap-4">
           <button
             onClick={analyzeResume}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+            className="flex-1 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
           >
             {loading ? (
                <ClipLoader color="white" size={20} />
@@ -470,7 +470,7 @@ export default function Home() {
         {result && (
           <div className="mt-8 space-y-6">
 
-<div className="bg-green-100 rounded-xl p-6 shadow">
+<div className="bg-green-100 dark:bg-green-950/40 rounded-xl p-6 shadow">
   <h2 className="text-xl font-bold text-green-800">
     Resume Score
   </h2>
@@ -487,14 +487,14 @@ export default function Home() {
   </p>
 </div>
 
-<div className="bg-blue-100 rounded-xl p-6 shadow">
+<div className="bg-blue-100 dark:bg-blue-950/40 rounded-xl p-6 shadow">
   <h2 className="text-xl font-bold text-blue-800">
     Job Match Score
   </h2>
 
   <div className="w-full bg-gray-300 rounded-full h-4 mt-4">
     <div
-      className="bg-blue-600 h-4 rounded-full transition-all duration-700"
+      className="bg-blue-600 dark:bg-blue-500 h-4 rounded-full transition-all duration-700"
       style={{ width: `${result.job_match_score}%` }}
     />
   </div>
@@ -585,7 +585,7 @@ export default function Home() {
                AI Tailored Resume
             </h2>
 
-            <div className="bg-purple-100 p-5 rounded-lg">
+            <div className="bg-purple-100 dark:bg-purple-950/40 p-5 rounded-lg">
               <h3 className="font-bold text-lg mb-2">
                 ATS Score
               </h3>
@@ -617,7 +617,7 @@ export default function Home() {
       (project: any, index: number) => (
         <div
           key={index}
-          className="border rounded-xl p-4 bg-gray-50"
+          className="border rounded-xl p-4 bg-gray-50 dark:bg-slate-700"
         >
           <h4 className="text-lg font-bold text-blue-700">
             {project.title}
@@ -629,7 +629,7 @@ export default function Home() {
             .map((tech: string, i: number) => (
               <span
                 key={i}
-                className="bg-blue-600 text-white px-2 py-1 rounded-full text-sm"
+                className="bg-blue-600 dark:bg-blue-500 text-white px-2 py-1 rounded-full text-sm"
               >
                 {tech.trim()}
               </span>
@@ -689,7 +689,7 @@ export default function Home() {
 
 <button
   onClick={downloadTailoredPDF}
-  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
+  className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
 >
 ⬇ Download PDF
 </button>
@@ -716,13 +716,13 @@ export default function Home() {
       📄 AI Generated Cover Letter
     </h2>
 
-    <div className="bg-gray-100 rounded-lg p-6 whitespace-pre-wrap leading-8">
+    <div className="bg-gray-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg p-6 whitespace-pre-wrap leading-8 text-slate-900 dark:text-slate-100">
       {coverLetter}
     </div>
 
     <button
       onClick={() => copyText(coverLetter)}
-      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+      className="mt-4 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
     >
       📋 Copy Cover Letter
     </button>
@@ -772,7 +772,7 @@ export default function Home() {
 
       </p>
 
-      <div className="mt-4 bg-green-50 rounded-lg p-4">
+      <div className="mt-4 bg-green-50 dark:bg-slate-800 rounded-lg p-4">
 
       <p className="font-bold text-green-700">
 
@@ -780,7 +780,7 @@ export default function Home() {
 
       </p>
 
-      <div className="mt-4 bg-green-50 rounded-lg p-4">
+      <div className="mt-4 bg-green-50 dark:bg-slate-800 rounded-lg p-4">
   <p className="font-bold text-green-700">
     💡 Easy Answer
   </p>
@@ -790,7 +790,7 @@ export default function Home() {
   </ReactMarkdown>
 </div>
 
-<div className="mt-4 bg-blue-50 rounded-lg p-4">
+<div className="mt-4 bg-blue-50 dark:bg-slate-800 rounded-lg p-4">
   <p className="font-bold text-blue-700">
     🎯 Professional Answer
   </p>
@@ -801,7 +801,7 @@ export default function Home() {
 </div>
 
 {item.star_answer && (
-  <div className="mt-4 bg-yellow-50 rounded-lg p-4">
+  <div className="mt-4 bg-yellow-50 dark:bg-slate-800 rounded-lg p-4">
     <p className="font-bold text-orange-700">
       ⭐ STAR Answer
     </p>
