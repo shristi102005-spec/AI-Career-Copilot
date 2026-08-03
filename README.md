@@ -11,9 +11,7 @@ An AI-powered career assistant that analyzes resumes, optimizes them for ATS, ta
 
 ## 🌐 Live Demo
 
-🚀 **Frontend:** Coming Soon
-
-⚙️ **Backend API:** Coming Soon
+ https://ai-career-copilot-black.vercel.app
 
 ---
 
